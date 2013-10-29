@@ -90,3 +90,25 @@ bash 'install_qmail' do
   creates "/usr/local/src/netqmail-1.06/config-fast"
 end
 
+bash 'setting_distribution' do
+  cwd '/var/qmail/alias'
+  user 'root'
+  group 'root'
+  code <<-EOC
+    sudo touch .qmail-postmaster .qmail-mailer-daemon .qmail-root
+    chmod 644 .qmail*
+    cp /var/qmail/boot/home /var/qmail/rc
+  EOC
+  creates "/var/qmail/rc"
+end
+
+bash 'start_qmail' do
+  cwd '/var/qmail/alias'
+  user 'root'
+  group 'root'
+  code <<-EOC
+    cp /var/qmail/boot/home /var/qmail/rc
+  EOC
+  creates "/var/qmail/rc"
+end
+

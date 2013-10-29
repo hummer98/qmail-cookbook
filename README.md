@@ -52,6 +52,19 @@ if you want only use qmail Just include `qmail` in your node's `run_list`:
 }
 ```
 
+#### sample email
+
+```bash
+# start qmail as background process
+$ sudo /var/qmail/rc &
+
+# send email
+$ sudo echo to: root@mail.example.com | /var/qmail/bin/qmail-inject
+
+# check sended mail
+$ sudo cat /var/qmail/alias/Mailbox
+```
+
 Contributing
 ------------
 
