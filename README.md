@@ -30,17 +30,17 @@ Attributes
     <td>recieve host name and domain name. <br>use by qmail-send</td>
     <td><tt>mail.example.com</tt></td>
   </tr>
+  <tr>
+    <td><tt>['qmail']['user']</tt></td>
+    <td>String</td>
+    <td>qmail use user</td>
+    <td><tt></tt></td>
+  </tr>
 </table>
 
 Usage
 -----
 #### qmail::default
-
-Set up local node
-
-```bash
-$ vagrant up
-```
 
 if you want only use qmail Just include `qmail` in your node's `run_list`:
 
@@ -48,19 +48,27 @@ if you want only use qmail Just include `qmail` in your node's `run_list`:
 {
   "qmail": { "domain": "mail.example.com" } ,
   "run_list": [
-    "recipe[qmail]"
+    "recipe[qmail::default]",
+    "recipe[qmail::tcpserver]",
+    "recipe[qmail::maildir]"
   ]
 }
 ```
 
 #### sample email
 
+Set up local node
+
+```bash
+$ vagrant up
+```
+
 ```bash
 # start qmail as background process
-$ sudo /var/qmail/rc &
+$ sudo qmail start
 
 # send email
-$ sudo echo to: root@mail.example.com | /var/qmail/bin/qmail-inject
+$ sudo echo to: vagrant@mail.example.com | /var/qmail/bin/qmail-inject
 
 # check sended mail
 $ sudo cat /var/qmail/alias/Mailbox

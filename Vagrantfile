@@ -18,7 +18,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       git:    { version: "1.8.4.1",
-                url: 'https://git-core.googlecode.com/files/git-1.8.4.1.tar.gz' }
+                url: 'https://git-core.googlecode.com/files/git-1.8.4.1.tar.gz' },
+      qmail:  { user: ["vagrant"] },
     }
 
     chef.run_list = [
