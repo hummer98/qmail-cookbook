@@ -26,7 +26,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "recipe[yum::epel]",
       "recipe[yum::repoforge]",
       "recipe[git::source]",
-      "recipe[qmail::default]"
+      "recipe[qmail::default]",
+      "recipe[qmail::tcpserver]",
+      "recipe[qmail::maildir]"
     ]
   end
 

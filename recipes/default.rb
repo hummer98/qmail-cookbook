@@ -7,8 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-log 'hello world'
-
 # include yum::default
 # 
 # yum_repository "opensuse" do
@@ -66,7 +64,6 @@ end
   end
 end
 
-
 bash 'download_qmail' do
   cwd '/usr/local/src'
   user 'root'
@@ -90,7 +87,7 @@ bash 'install_qmail' do
   creates "/usr/local/src/netqmail-1.06/config-fast"
 end
 
-bash 'setting_distribution' do
+bash 'setting_qmail' do
   cwd '/var/qmail/alias'
   user 'root'
   group 'root'
@@ -98,17 +95,38 @@ bash 'setting_distribution' do
     sudo touch .qmail-postmaster .qmail-mailer-daemon .qmail-root
     chmod 644 .qmail*
     cp /var/qmail/boot/home /var/qmail/rc
+    sed -i 's/Mailbox/Maildir\//g' /var/qmail/rc
   EOC
   creates "/var/qmail/rc"
 end
 
-bash 'start_qmail' do
-  cwd '/var/qmail/alias'
+template "/etc/init.d/qmail" do
+  source 'qmail.erb'
+  mode '0755'
+end
+template "/usr/local/bin/qmail" do
+  source 'qmail.erb'
+  mode '0755'
+end
+
+## Maildir
+#
+bash 'create root Maildir' do
   user 'root'
   group 'root'
   code <<-EOC
-    cp /var/qmail/boot/home /var/qmail/rc
+    /var/qmail/bin/maildirmake ~alias/Maildir
+    chown -R alias /var/qmail/alias/Maildir
   EOC
-  creates "/var/qmail/rc"
+  creates "~alias/Maildir"
 end
+
+# bash 'start qmail' do
+#   user 'root'
+#   group 'root'
+#   code <<-EOC
+#     sudo /usr/local/bin/qmail start
+#   EOC
+# end
+
 

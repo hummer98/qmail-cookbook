@@ -1,0 +1,108 @@
+#!/bin/sh
+#
+# qmail
+#
+# chkconfig: 2345 80 30
+# description: qmail start/stop script
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+PATH=/var/qmail/bin:/usr/local/bin:/bin:/usr/bin
+
+test -x /var/qmail/rc || exit 0
+
+start() {
+  # Start daemons.
+  if [ -z $(/sbin/pidof qmail-send) ];  then
+    echo -n "Starting qmail"
+
+    # qmail
+    csh -cf '/var/qmail/rc &' 2>&1 > /dev/null
+
+    # SMTP
+    tcpserver -qv -l0 -HR -u `id -u qmaild` -g `id -g qmaild` \
+    -x /etc/tcp.smtp.cdb 0 smtp \
+    qmail-smtpd `hostname` /bin/checkpassword /bin/true 2>&1|\
+    splogger smtp &
+
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && touch /var/lock/subsys/qmail
+    return $RETVAL
+  else
+    echo "qmail is already started"
+  fi
+}
+
+stop() {
+  # Stop daemons.
+  if [ ! -z $(/sbin/pidof qmail-send) ];  then
+    echo -n "Shutting down qmail"
+    /bin/kill $(/sbin/pidof tcpserver)
+    /bin/kill $(/sbin/pidof qmail-send)
+    until [ -z $(/sbin/pidof qmail-send) ] && [ -z $(/sbin/pidof tcpserver) ]; do :; done
+    echo
+    rm -f /var/lock/subsys/qmail
+  else
+    echo "qmail is not running"
+  fi
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  status)
+    if [ ! -z $(/sbin/pidof qmail-send) ] ;  then
+      echo -n "qmail (pid"
+      echo -n " `/sbin/pidof qmail-send`"
+      echo -n " `/sbin/pidof tcpserver`"
+      echo ") is running..."
+    else
+      echo "qmail is stopped"
+    fi
+    ;;
+  *)
+    echo "Usage: qmail {start|stop|restart|status}"
+    exit 1
+esac
+
+exit 0
+
+# case "$1" in
+#   start)
+#     echo -n "Starting qmail: "
+#     sh -cf '/var/qmail/rc &'
+#     echo "qmail."
+#     ;;
+#   stop)
+#     echo -n "Stopping qmail: "
+#     pid=`/bin/ps -e | /bin/grep qmail | /bin/sed -e 's/^  *//' -e 's/ .*//'`
+#     if test "$pid"
+#     then
+#       kill $pid
+#     fi
+#     echo "qmail."
+#     ;;
+#   restart)
+#     echo -n "Restarting qmail: "
+#     $0 stop
+#     $0 start
+#     echo "qmail."
+#     ;;
+#   *)
+# 
+#     echo "Usage: qmail {start|stop|restart}"
+#     exit 1
+# esac
+# 
+# exit 0

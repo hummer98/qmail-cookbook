@@ -7,6 +7,7 @@ Requirements
 ------------
 
 #### packages
+- `cent os`
 - `ruby > 2.0.0`
 - `bundler`
 - `virtualbox`
