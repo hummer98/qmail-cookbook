@@ -40,30 +40,41 @@ Attributes
 
 Usage
 -----
-#### qmail::default
+#### qmail::default, qmail::tcpserver
 
-if you want only use qmail Just include `qmail` in your node's `run_list`:
+if you want only use qmail Just include `qmail::default` and `qmail::tcpserver` in your node's `run_list`:
 
 ```json
 {
-  "qmail": { "domain": "mail.example.com" } ,
   "run_list": [
     "recipe[qmail::default]",
-    "recipe[qmail::tcpserver]",
+    "recipe[qmail::tcpserver]"
+  ]
+}
+```
+
+#### qmail::maildir
+
+if you want use maildir for any users, Just include `qmail::maildir` and `set node['qmail']['user']` in your node's `run_list`:
+
+```json
+{
+  "qmail": { "user": ['hoge', 'foo'] } ,
+  "run_list": [
     "recipe[qmail::maildir]"
   ]
 }
 ```
+
 
 #### sample email
 
 Set up local node
 
 ```bash
+# up to local server
 $ vagrant up
-```
 
-```bash
 # start qmail as background process
 $ sudo qmail start
 
@@ -72,6 +83,10 @@ $ sudo echo to: vagrant@mail.example.com | /var/qmail/bin/qmail-inject
 
 # check sended mail
 $ sudo cat /var/qmail/alias/Mailbox
+
+# alias ( use for mailing list )
+$ vi $HOME/.qmail
+&hoge@gmail.com
 ```
 
 Contributing
@@ -86,4 +101,7 @@ Contributing
 
 License and Authors
 -------------------
-Authors: TODO: List authors
+
+License MIT
+
+

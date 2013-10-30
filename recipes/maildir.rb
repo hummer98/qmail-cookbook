@@ -1,10 +1,8 @@
 #
 # Cookbook Name:: qmail
-# Recipe:: default
+# Recipe:: maildir
 #
-# Copyright 2013, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
+# ae06710 / ThreeTreesLight
 #
 
 node[:qmail][:user].each do |usr|

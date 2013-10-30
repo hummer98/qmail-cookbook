@@ -2,9 +2,7 @@
 # Cookbook Name:: qmail
 # Recipe:: default
 #
-# Copyright 2013, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
+# ae06710 / ThreeTreesLight
 #
 
 # include yum::default
